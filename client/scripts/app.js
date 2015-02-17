@@ -148,13 +148,14 @@ var clearScreen = function(){
 getData();
 
 var funcWrapper = function (counter, serverData) {
+var test;
 
 
 var testing = function(counter){
   console.log(counter);
   var str = serverData[counter].username + ': ' + serverData[counter].text + ' (' + serverData[counter].roomname + ')';
-    str = escapeChar(str);
-  $('#content').prepend('<p>' + str + '</p>');
+  $('#content').prepend('<p></p>')
+  $('p:first-child').text(str);
 
 };
 setInterval(function(){
@@ -169,9 +170,6 @@ setInterval(function(){
 
 };
 
-setInterval(function() {
-  getData();
-}, 20000);
 
 
 

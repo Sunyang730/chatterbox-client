@@ -24,7 +24,7 @@
 //
 // ** Append messages to #main
 //
-
+//var app = {};
 var message = {
   'username': 'aaa',
   'text': 'aa',
@@ -35,7 +35,7 @@ window.getUserInput = function () {
   message.username = $('#username').val();
   message.text = $('#text').val();
   message.roomname = $('#roomname').val();
-  console.log('romeName', message.roomname, 'text', message.text, 'username', message.username);
+  console.log('romeName', message.roomname, 'text', message.text, 'username', message.username)
   postData();
 }
 
@@ -114,7 +114,6 @@ var postData = function() {
   });
 };
 
-
 // get messages
 var getData = function () {
 
@@ -128,8 +127,10 @@ var getData = function () {
     success: function (data) {
       console.log('chatterbox: Message gotten');
       console.log(data);
+      var serverData = data.results;
       //append the data to main using the above global function ºuº
-      displayMessage(data.results);
+      //displayMessage(data.results);
+      funcWrapper(serverData.length-1, serverData);
     },
     error: function (data) {
       // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -144,7 +145,37 @@ var clearScreen = function(){
 };
 
 //setInterval(getData, 10);
-//getData();
+getData();
+
+var funcWrapper = function (counter, serverData) {
+
+
+var testing = function(counter){
+  console.log(counter);
+  var str = serverData[counter].username + ': ' + serverData[counter].text + ' (' + serverData[counter].roomname + ')';
+    str = escapeChar(str);
+  $('#content').prepend('<p>' + str + '</p>');
+
+};
+setInterval(function(){
+
+  if(counter >= 0){
+    testing(counter);
+  }
+  counter--;
+  //getData();
+
+}, 200);
+
+};
+
+setInterval(function() {
+  getData();
+}, 20000);
+
+
+
+
 
 
 

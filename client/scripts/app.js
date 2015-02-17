@@ -1,35 +1,11 @@
-// YOUR CODE HERE:
+// YOUR CºDE HERE:
 
-//request data from the server
-//
-//  convert the data using JSON.parse
-//display the data index.html
-//
-//
-// display messages retrieved fromt he parse server
-//
-// setup a way to refresh the displayed messages (either auto or button)
-//  Ajax
-//  $.ajax(j'kwerie)
-//
-// be careful to use proper escaping. ESCAPING.
-//   don't get hacked
-//
-// if you XSS attack, make it educational
-//
-// allow users to select username
-//
-// ** Send messages to parse server
-//   convert messages to string using JSON.stringify
-//
-// ** Append messages to #main
-//
-//var app = {};
 var message = {
   'username': 'aaa',
   'text': 'aa',
   'roomname': 'aa'
 };
+var mostRecent ='';
 
 window.getUserInput = function () {
   message.username = $('#username').val();
@@ -40,12 +16,6 @@ window.getUserInput = function () {
 }
 
 
-/*window.submitClick = function (name, txt, room) {
-  //set message's fields to the arguments
-  message['username'] = escapeChar(name);
-  message['text'] = escapeChar(txt);
-  message['roomname'] = escapeChar(room);
-}*/
 
 // most recent to oldest
 window.displayMessage = function(message){
@@ -116,24 +86,42 @@ var postData = function() {
 
 // get messages
 var getData = function () {
-
-
   $.ajax({
-  // always use this url
-    url: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
+    url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
+    data: {'order':'-createdAt'},
     //data: JSON.parse(message),
     contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message gotten');
-      console.log(data);
-      var serverData = data.results;
-      //append the data to main using the above global function ºuº
-      //displayMessage(data.results);
-      funcWrapper(serverData.length-1, serverData);
+      //console.log(data.results);
+      mostRecent = data.results[0].createdAt;
+      populateData(data.results.length-1, data.results);
     },
     error: function (data) {
-      // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('chatterbox: Failed to get message');
+    }
+  });
+};
+
+
+var updateData = function () {
+  console.log(mostRecent);
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'GET',
+    data: {'where' : JSON.stringify({
+      "createdAt" : {'$gt': mostRecent}
+    })},
+    //data: JSON.parse(message),
+    contentType: 'application/json',
+    success: function (data) {
+      //console.log(data);
+      if (data.results.length){// if the list is updated with new data
+        populateData(data.results.length-1, data.results);
+        mostRecent = data.results[0].createdAt;
+      }
+    },
+    error: function (data) {
       console.error('chatterbox: Failed to get message');
     }
   });
@@ -144,29 +132,23 @@ var clearScreen = function(){
   $('#main').append('<div id = "content"></div>');
 };
 
-//setInterval(getData, 10);
 getData();
 
-var funcWrapper = function (counter, serverData) {
-var test;
 
+var populateData = function (counter, serverData) {
+  var testing = function(counter){
+    var str = serverData[counter].username + ': ' + serverData[counter].text + ' (' + serverData[counter].roomname + ')';
+    $('#content').prepend('<p></p>')
+    $('p:first-child').text(str);
 
-var testing = function(counter){
-  console.log(counter);
-  var str = serverData[counter].username + ': ' + serverData[counter].text + ' (' + serverData[counter].roomname + ')';
-  $('#content').prepend('<p></p>')
-  $('p:first-child').text(str);
+  };
+  setInterval(function(){
 
-};
-setInterval(function(){
-
-  if(counter >= 0){
-    testing(counter);
-  }
-  counter--;
-  //getData();
-
-}, 200);
+    if(counter >= 0){
+      testing(counter);
+    }
+    counter--;
+  }, 20);
 
 };
 

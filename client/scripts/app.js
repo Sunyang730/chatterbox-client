@@ -10,11 +10,17 @@ var friends = {'joe' : true};
 // {friendName: false}
 
 // username button click handler
-$(".link").click(function() {
-  // add to friends
-  friends[this.text] = true; // can you even do this?
-  console.log('friend added maybe');
-})
+var friendToggle = function(name) {
+  //console.log('test'); // this works
+  //ADD THE FRIEND
+  if (! friends[name]) {
+    friends[name] = true;
+  } else {
+    friends[name] = false;
+  }
+  clearScreen();
+  getData();
+}
 
 
 
@@ -153,11 +159,11 @@ var populateData = function (counter, serverData) {
     var theirText = serverData[counter].text;
     var theirRoom = serverData[counter].roomname;
     $('#content').prepend('<div></div>');
-    $('#content div:first-child').append('<button class="name"></button>');
+    $('#content div:first-child').append('<button class="name" onclick = friendToggle(' + JSON.stringify(theirName) +')></button>');
 
     //if friends[serverData[counter].username] exists
     //  append bold tag
-    if(friends.hasOwnProperty(serverData[counter].username)){
+    if(friends.hasOwnProperty(serverData[counter].username) && friends[serverData[counter].username] === true){
       //console.log('we here');
       //append bold tag if they are a friend
       $('#content div:first-child button:first-child').append('<b></b>');

@@ -26,20 +26,36 @@
 //
 
 var message = {
-  'username': 'shawndrost',
-  'text': 'trololo',
-  'roomname': '4chan'
+  'username': 'aaa',
+  'text': 'aa',
+  'roomname': 'aa'
 };
 
+window.getUserInput = function () {
+  message.username = $('#username').val();
+  message.text = $('#text').val();
+  message.roomname = $('#roomname').val();
+  console.log('romeName', message.roomname, 'text', message.text, 'username', message.username);
+  postData();
+}
+
+
+/*window.submitClick = function (name, txt, room) {
+  //set message's fields to the arguments
+  message['username'] = escapeChar(name);
+  message['text'] = escapeChar(txt);
+  message['roomname'] = escapeChar(room);
+}*/
 
 // most recent to oldest
 window.displayMessage = function(message){
   // escape the characters into a new message
   // var safeMessage = //message with escaped characters
+  //$('#content').text('');
   for(var i = 0; i < message.length; i++) {
     var str = message[i].username + ': ' + message[i].text + ' (' + message[i].roomname + ')';
     str = escapeChar(str);
-    $('#content').prepend('<p>' + str + '</p>');
+    $('#content').append('<p>' + str + '</p>');
   }
 };
 
@@ -81,27 +97,31 @@ window.escapeChar = function (str) {
 }
 
 //post messages
-$.ajax({
+var postData = function() {
+  $.ajax({
   // always use this url
-  url: 'https://api.parse.com/1/classes/chatterbox',
-  type: 'POST',
-  data: JSON.stringify(message),
-  contentType: 'application/json',
-  success: function (data) {
-    console.log('chatterbox: Message sent');
-  },
-  error: function (data) {
-    // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-    console.error('chatterbox: Failed to send message');
-  }
-});
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'POST',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+};
 
 
 // get messages
 var getData = function () {
+
+
   $.ajax({
   // always use this url
-    url: 'https://api.parse.com/1/classes/chatterbox',
+    url: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
     type: 'GET',
     //data: JSON.parse(message),
     contentType: 'application/json',
@@ -118,8 +138,13 @@ var getData = function () {
   });
 };
 
+var clearScreen = function(){
+  $('#content').remove();
+  $('#main').append('<div id = "content"></div>');
+};
+
 //setInterval(getData, 10);
-getData();
+//getData();
 
 
 

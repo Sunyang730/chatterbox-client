@@ -6,6 +6,17 @@ var message = {
   'roomname': 'aa'
 };
 var mostRecent ='';
+var friends = {'joe' : true};
+// {friendName: false}
+
+// username button click handler
+$(".link").click(function() {
+  // add to friends
+  friends[this.text] = true; // can you even do this?
+  console.log('friend added maybe');
+})
+
+
 
 window.getUserInput = function () {
   message.username = $('#username').val();
@@ -37,7 +48,7 @@ window.displayMessage = function(message){
 //     add \ to it
 //   return string
 window.escapeChar = function (str) {
-
+  str = str || '';
   if ( typeof str.length === 'undefined') {
     return '';
   }
@@ -137,9 +148,34 @@ getData();
 
 var populateData = function (counter, serverData) {
   var testing = function(counter){
-    var str = serverData[counter].username + ': ' + serverData[counter].text + ' (' + serverData[counter].roomname + ')';
-    $('#content').prepend('<p></p>')
-    $('p:first-child').text(str);
+    //var str = serverData[counter].username + ': ' + serverData[counter].text + ' (' + serverData[counter].roomname + ')';
+    var theirName = serverData[counter].username;
+    var theirText = serverData[counter].text;
+    var theirRoom = serverData[counter].roomname;
+    $('#content').prepend('<div></div>');
+    $('#content div:first-child').append('<button class="name"></button>');
+
+    //if friends[serverData[counter].username] exists
+    //  append bold tag
+    if(friends.hasOwnProperty(serverData[counter].username)){
+      //console.log('we here');
+      //append bold tag if they are a friend
+      $('#content div:first-child button:first-child').append('<b></b>');
+      $('#content div:first-child button:first-child b:first-child').text(escapeChar(theirName));
+    } else { // if they're not a friend, their name is normal
+      $('#content div:first-child button:first-child').text(escapeChar(theirName));
+    }
+
+    $('#content div:first-child').append('<span></span>');
+    $('#content div span:nth-child(2)').text(escapeChar(' : ' + theirText + ' - '));
+    $('#content div:nth-child(2)').append('<span></span>')
+    $('#content div span:nth-child(3)').text(escapeChar(theirRoom));
+    $('#content div:nth-child(3)').append('<br>')
+
+    // our DOM is being manipulated sometimes
+    //   message text, room being changed
+
+
 
   };
   setInterval(function(){

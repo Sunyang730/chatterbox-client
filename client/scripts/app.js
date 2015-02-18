@@ -6,6 +6,7 @@ var message = {
   'roomname': 'aa'
 };
 var mostRecent ='';
+var roomIndex = {};
 var friends = {'joe' : true};
 // {friendName: false}
 
@@ -122,7 +123,7 @@ var getData = function () {
 
 
 var updateData = function () {
-  console.log(mostRecent);
+  //console.log(mostRecent);
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
@@ -180,20 +181,51 @@ var populateData = function (counter, serverData) {
 
     // our DOM is being manipulated sometimes
     //   message text, room being changed
-
-
+    if(!roomIndex.hasOwnProperty(serverData[counter].roomname)){
+      $('#roomContainer').append('<p id= room ></p>');
+      $('#roomContainer p:last-child').text(serverData[counter].roomname);
+      roomIndex[theirRoom] = theirRoom;
+    }
 
   };
+
+  $('#roomContainer').on('click', 'p', function() {
+    //console.log('clickable goodies');
+    roomFilter($(this).text());
+  });
+
   setInterval(function(){
 
     if(counter >= 0){
       testing(counter);
     }
     counter--;
-  }, 20);
+  }, 1);
 
 };
 
+var roomFilter = function (room) {
+  //console.log(mostRecent);
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'GET',
+    data: {'where' : JSON.stringify({
+      "roomname" : room
+    })},
+    //data: JSON.parse(message),
+    contentType: 'application/json',
+    success: function (data) {
+      //console.log(data);
+      if (data.results.length){// if the list is updated with new data
+        populateData(data.results.length-1, data.results);
+        mostRecent = data.results[0].createdAt;
+      }
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to get message');
+    }
+  });
+};
 
 
 

@@ -36,14 +36,33 @@ body {
     color: #D35400;
 }
 
+#roomContainer {
+    background: gray;
+    color: black;
+    top:0;
+    left: 0;
+    bottom: 0;
+    padding-top: 50px;
+    border: 1px solid gray;
+    width: 150px;
+    height:100%;
+    float: left;
+    position: fixed;
+
+}
+
 #main {
-    width: 500px;
-    margin: auto;
+
+    top:0;
+    right:0;
+    left: 150px;
     text-align: left;
-    background: white;
+    background: black;
     padding: 50px 60px;
-    border: solid #ddd;
+    border: solid #D35400;
     border-width: 0 1px 1px 1px;
+    float: right;
+    position: absolute;
 }
 
 #main h1 {
